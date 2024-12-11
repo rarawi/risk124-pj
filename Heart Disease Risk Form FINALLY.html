@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>แบบสอบถามประเมินความเสี่ยงโรคหลอดเลือดหัวใจ</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0 auto;
+            padding: 20px;
+            max-width: 700px;
+            background-color: #f3e5f5; /* สีม่วงอ่อน */
+            color: #4a148c; /* สีม่วงเข้ม */
+        }
+        h1 {
+            text-align: center;
+            color: #6a1b9a; /* สีม่วงสด */
+        }
+        p {
+            text-align: center;
+        }
+        form {
+            background: #ffffff; /* สีขาว */
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            margin-top: 20px;
+        }
+        label {
+            font-weight: bold;
+            color: #4a148c; /* สีม่วงเข้ม */
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #d1c4e9; /* สีม่วงอ่อน */
+            border-radius: 5px;
+            background-color: #f8f5fa; /* สีขาวอมม่วง */
+        }
+        input[type="radio"] {
+            width: auto;
+            margin-right: 5px;
+        }
+        button {
+            background-color: #7b1fa2; /* สีม่วงเข้ม */
+            color: #ffffff;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #4a148c; /* สีม่วงเข้มขึ้นเมื่อ hover */
+        }
+        .result {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #4a148c; /* สีม่วงเข้ม */
+        }
+    </style>
+</head>
+<body>
+    <h1>แบบสอบถามประเมินความเสี่ยงโรคหลอดเลือดหัวใจ</h1>
+    <p>กรุณากรอกข้อมูลเพื่อประเมินความเสี่ยงของคุณ</p>
+    <form id="healthForm" onsubmit="calculateRisk(event)">
+        <label for="อายุ">อายุ:</label>
+        <input type="number" id="อายุ" name="อายุ" placeholder="กรุณาใส่อายุ" min="0" required>
+        
+        <label for="เพศ">เพศ:</label>
+        <select id="เพศ" name="เพศ" required>
+            <option value="">--กรุณาเลือก--</option>
+            <option value="ชาย">ชาย</option>
+            <option value="หญิง">หญิง</option>
+        </select>
+
+        <label for="รอบเอว">รอบเอว (ซม.):</label>
+        <input type="number" id="รอบเอว" name="waist" placeholder="กรุณาใส่รอบเอว" min="0" required>
+
+        <label for="น้ำหนัก">น้ำหนัก (กก.):</label>
+        <input type="number" id="น้ำหนัก" name="weight" placeholder="กรุณาใส่น้ำหนัก" min="0" required>
+
+        <label for="ส่วนสูง">ส่วนสูง (ซม.):</label>
+        <input type="number" id="ส่วนสูง" name="height" placeholder="กรุณาใส่ส่วนสูง" min="0" required>
+
+        <label>คุณออกกำลังกายหรือไม่?</label><br>
+        <input type="radio" id="exercise_yes" name="exercise" value="ใช่" required>
+        <label for="exercise_yes">ใช่</label>
+        <input type="radio" id="exercise_no" name="exercise" value="ไม่">
+        <label for="exercise_no">ไม่</label><br>
+
+        <label>คนในครอบครัวมีประวัติเป็นโรคหลอดเลือดหัวใจหรือไม่?</label><br>
+        <input type="radio" id="family_yes" name="family_history" value="ใช่" required>
+        <label for="family_yes">ใช่</label>
+        <input type="radio" id="family_no" name="family_history" value="ไม่">
+        <label for="family_no">ไม่</label><br>
+
+        <label>คุณสูบบุหรี่หรือไม่?</label><br>
+        <input type="radio" id="smoke_yes" name="smoking" value="ใช่" required>
+        <label for="smoke_yes">ใช่</label>
+        <input type="radio" id="smoke_no" name="smoking" value="ไม่">
+        <label for="smoke_no">ไม่</label><br>
+
+        <label for="ระดับน้ำตาลในเลือด">ระดับน้ำตาลในเลือด (mg/dL):</label>
+        <input type="number" id="ระดับน้ำตาลในเลือด" name="blood_sugar" placeholder="กรุณาใส่ค่า" min="0" required>
+
+        <label for="ระดับคอเลสเตอรอล">ระดับคอเลสเตอรอล (mg/dL):</label>
+        <input type="number" id="ระดับคอเลสเตอรอล" name="cholesterol" placeholder="กรุณาใส่ค่า" min="0" required>
+
+        <button type="submit">ประเมินความเสี่ยง</button>
+    </form>
+    <div class="result" id="result"></div>
+
+    <script>
+        function calculateRisk(event) {
+            event.preventDefault(); // ป้องกันการโหลดหน้าใหม่
+
+            let score = 0;
+
+            // รับค่าจากแบบฟอร์ม
+            const age = parseInt(document.getElementById('อายุ').value);
+            const gender = document.getElementById('เพศ').value;
+            const waist = parseInt(document.getElementById('รอบเอว').value);
+            const weight = parseFloat(document.getElementById('น้ำหนัก').value);
+            const height = parseFloat(document.getElementById('ส่วนสูง').value);
+            const exercise = document.querySelector('input[name="exercise"]:checked').value;
+            const familyHistory = document.querySelector('input[name="family_history"]:checked').value;
+            const smoking = document.querySelector('input[name="smoking"]:checked').value;
+            const bloodSugar = parseInt(document.getElementById('ระดับน้ำตาลในเลือด').value);
+            const cholesterol = parseInt(document.getElementById('ระดับคอเลสเตอรอล').value);
+
+            // คำนวณ BMI
+            const bmi = weight / ((height / 100) ** 2);
+
+            // คำนวณคะแนน
+            if (age >= 45) score += 10;
+            if (gender === 'ชาย') score += 5;
+            if (waist > 90 && gender === 'ชาย' || waist > 80 && gender === 'หญิง') score += 10;
+            if (bmi >= 30) score += 20;
+            else if (bmi >= 25) score += 10;
+            if (exercise === 'ไม่') score += 10;
+            if (familyHistory === 'ใช่') score += 15;
+            if (smoking === 'ใช่') score += 20;
+            if (bloodSugar > 126) score += 20;
+            else if (bloodSugar > 100) score += 10;
+            if (cholesterol > 240) score += 20;
+            else if (cholesterol > 200) score += 10;
+
+            // แสดงผลลัพธ์
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = `คะแนนความเสี่ยงของคุณคือ: ${score}`;
+            if (score > 50) {
+                resultDiv.innerHTML += `<p>ความเสี่ยงสูง! ควรปรึกษาแพทย์.</p>`;
+            } else if (score > 30) {
+                resultDiv.innerHTML += `<p>ความเสี่ยงปานกลาง. ควรปรับพฤติกรรมและดูแลสุขภาพ.</p>`;
+            } else {
+                resultDiv.innerHTML += `<p>ความเสี่ยงต่ำ. สุขภาพของคุณดี!</p>`;
+            }
+        }
+    </script>
+</body>
+</html>
